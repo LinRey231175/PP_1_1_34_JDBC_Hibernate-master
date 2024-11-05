@@ -17,58 +17,20 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Main {
-    private static SessionFactory sessionFactory;
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://localhost:3306/mysqld";
-    private static final String LOGIN = "root";
-    private static final String PASSWORD = "Andrey231175!";
+
 
     public static void main(String[] args) {
-        UserDaoHibernateImpl daoHibernate = new UserDaoHibernateImpl();
-        daoHibernate.createUsersTable();
-        daoHibernate.saveUser ("Name1", "LastName1", (byte) 20);
-        daoHibernate.saveUser("Name2", "LastName2", (byte) 25);
-        daoHibernate.saveUser("Name3", "LastName3", (byte) 31);
-        daoHibernate.saveUser("Name4", "LastName4", (byte) 38);
-        System.out.println(daoHibernate.getAllUsers());
-        daoHibernate.cleanUsersTable();
-        daoHibernate.dropUsersTable();
+        UserDaoHibernateImpl UserService = new UserDaoHibernateImpl();
+        UserService.createUsersTable();
+        UserService.saveUser ("Name1", "LastName1", (byte) 20);
+        UserService.saveUser("Name2", "LastName2", (byte) 25);
+        UserService.saveUser("Name3", "LastName3", (byte) 31);
+        UserService.saveUser("Name4", "LastName4", (byte) 38);
+        System.out.println(UserService.getAllUsers());
+        UserService.cleanUsersTable();
+        UserService.dropUsersTable();
     }
 
-    public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
-                Properties settings = new Properties();
-                settings.put(Environment.DRIVER, DRIVER);
-                settings.put(Environment.URL, URL);
-                settings.put(Environment.USER, LOGIN);
-                settings.put(Environment.PASS, PASSWORD);
-                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
-                settings.put(Environment.SHOW_SQL, "true");
-                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-                settings.put(Environment.HBM2DDL_AUTO, "");
-                configuration.setProperties(settings)
-                        .addAnnotatedClass(User.class);
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-            } catch (Exception e) {
-                System.out.println("Exception" + e);
-            }
-        }
-        return sessionFactory;
-    }
 
-    public static Connection getConnection() {
-        Connection connection = null;
-        try {
-            Class.forName(DRIVER);
-            connection = DriverManager.getConnection(URL, LOGIN, PASSWORD);
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("Connection creation error...");
-        }
-        return connection;
-    }
 
 }
